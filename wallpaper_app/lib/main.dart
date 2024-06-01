@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.black54),
         useMaterial3: true,
       ),
-        initialRoute: MyPagesName.splashFile,
+        initialRoute: MyPagesName.homescreen,
         getPages: MyPages.list);
   }
 }

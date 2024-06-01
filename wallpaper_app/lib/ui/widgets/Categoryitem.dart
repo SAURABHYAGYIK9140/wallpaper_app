@@ -38,7 +38,7 @@ class _CategoryItemState extends State<CategoryItem> {
                 setState(() {
                   selectedIndex = index;
                 });
-                _mainController.getdata_bycat(categoryList[selectedIndex]);
+                _mainController.getDataByCat(categoryList[selectedIndex],true);
               },
               child: Container(
                 padding: EdgeInsets.symmetric(vertical: 5, horizontal: 10),

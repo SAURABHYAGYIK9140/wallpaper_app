@@ -50,6 +50,17 @@ dev_dependencies:
   get: ^4.6.6
   http: ^1.2.1
   shimmer: ^3.0.0
+  wallpaper: ^1.1.1
+  fluttertoast: ^8.2.5
+  path_provider: ^2.1.3
+  flutter_cache_manager: ^3.1.2
+  sqflite: ^2.3.3+1
+  flutter_wallpaper_manager: ^0.0.4
+  permission_handler: ^11.3.1
+  gal: ^2.3.0
+  flutter_blurhash: ^0.8.2
+  blurhash_ffi: ^1.2.6
+
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

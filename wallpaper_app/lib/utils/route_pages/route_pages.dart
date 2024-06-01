@@ -11,10 +11,10 @@ import '../../ui/screens/SplashPage.dart';
 class MyPages
 {
   static List<GetPage> get list => [
-    GetPage(
-        name: MyPagesName.splashFile,
-        page: () => SplashPage(),
-        binding: SplashBinding()),
+    // GetPage(
+    //     name: MyPagesName.splashFile,
+    //     page: () => SplashPage(),
+    //     binding: SplashBinding()),
     GetPage(
         name: MyPagesName.homescreen,
         page: () => HomeScreen(),
