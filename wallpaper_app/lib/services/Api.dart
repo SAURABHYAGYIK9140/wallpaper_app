@@ -10,7 +10,7 @@ class MyApi{
     var headersList = {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
-      'Authorization': 'yI8j2TOVfpkAgIsmLLKSS4vIF4460ydNBKmjf6CD8HTfTJL8e8piKFYY'
+      'Authorization': AppConstraints.API_KEY
     };
 
     var response = await http.get(url, headers: headersList);
@@ -21,7 +21,7 @@ class MyApi{
     var headersList = {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
-      'Authorization': 'yI8j2TOVfpkAgIsmLLKSS4vIF4460ydNBKmjf6CD8HTfTJL8e8piKFYY'
+      'Authorization': AppConstraints.API_KEY
     };
 
     var response = await http.get(url, headers: headersList);
@@ -32,7 +32,7 @@ class MyApi{
     var headersList = {
       'Accept': '*/*',
       'User-Agent': 'Thunder Client (https://www.thunderclient.com)',
-      'Authorization': 'yI8j2TOVfpkAgIsmLLKSS4vIF4460ydNBKmjf6CD8HTfTJL8e8piKFYY'
+      'Authorization': AppConstraints.API_KEY
     };
     // print("catname_get_curateddata" + url.toString());
 
