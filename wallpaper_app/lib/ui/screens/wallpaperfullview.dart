@@ -101,7 +101,6 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
 }
   @override
   Widget build(BuildContext context) {
-    FocusScope.of(context).requestFocus(FocusNode());
 
 
     var height = MediaQuery.of(context).size.height;

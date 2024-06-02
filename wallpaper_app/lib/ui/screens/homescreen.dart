@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wallpaper_app/controllers/main_controller/main_controller.dart';
 import 'package:wallpaper_app/main.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:wallpaper_app/ui/screens/wallpaperfullview.dart';
 import 'package:wallpaper_app/ui/widgets/Categoryitem.dart';
 import 'package:wallpaper_app/ui/widgets/StaggeredListView.dart';
@@ -56,9 +57,18 @@ class _HomeScreensState extends State<HomeScreen> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(style: TextStyle(color: Colors.white), "Wallpaper-App"),
+        title: Text(          style: GoogleFonts.alike(textStyle:
+        TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+                "Wallify"),
       ),
       body: Column(children: [
+
+        Text(
+          '✨ Your Screen Deserves the Best – Discover, Download, and Set Today! ✨',
+          style: GoogleFonts.alef(textStyle: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+          textAlign: TextAlign.center,
+        ),
+        SizedBox(height: 10),
         Padding(
           padding: EdgeInsets.symmetric(horizontal: 10,vertical: 5),
           child: TextField(
@@ -105,6 +115,8 @@ class _HomeScreensState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         return InkWell(
                           onTap: () {
+                            FocusScope.of(context).requestFocus(FocusNode());
+
                             Get.to(WallpaperFullView(
                                 mainController.allwallpapers[index]));
                           },
