@@ -12,7 +12,6 @@ import 'package:wallpaper_app/ui/screens/homescreen.dart';
 
 import '../../models/Wallpaper.dart';
 import '../../utils/ImageDownloader.dart';
-import 'package:flutter_wallpaper_manager/flutter_wallpaper_manager.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../widgets/CustomProgressDialog.dart';
 import 'package:http/http.dart' as http;
@@ -174,6 +173,7 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
                         context: context,
                         builder: (context) {
                           return Container(
+                            padding: EdgeInsets.only(bottom: Get.mediaQuery.padding.bottom + 20, top: 20),
                             decoration: BoxDecoration(
                               color: Colors.black,
                               borderRadius: BorderRadius.only(
@@ -340,20 +340,20 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
     );
   }
 
-  void _setWallpaper(String path) async {
-    try {
-      bool result = await WallpaperManager.setWallpaperFromFile(
-        path,
-        WallpaperManager.HOME_SCREEN,
-      );
-
-      if (context.mounted) {
-        Get.to(HomeScreen());
-      }
-    } catch (e) {
-      print('Failed to set wallpaper: $e');
-    }
-  }
+  // void _setWallpaper(String path) async {
+  //   try {
+  //     bool result = await WallpaperManager.setWallpaperFromFile(
+  //       path,
+  //       WallpaperManager.HOME_SCREEN,
+  //     );
+  //
+  //     if (context.mounted) {
+  //       Get.to(HomeScreen());
+  //     }
+  //   } catch (e) {
+  //     print('Failed to set wallpaper: $e');
+  //   }
+  // }
 
   Future<bool> saveImageToGallery(String imagePath) async {
     try {
