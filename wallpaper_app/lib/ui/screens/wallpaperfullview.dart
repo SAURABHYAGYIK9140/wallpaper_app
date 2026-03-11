@@ -79,6 +79,12 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
           print("result"+result);
 
           hideCustomProgressDialog(context);
+          Fluttertoast.showToast(
+            msg: "Wallpaper applied successfully",
+            backgroundColor: Colors.white,
+            textColor: Colors.black,
+            gravity: ToastGravity.BOTTOM,
+          );
         } catch (e) {
           print('Failed to set wallpaper.');
           hideCustomProgressDialog(context);
