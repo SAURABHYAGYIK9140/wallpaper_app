@@ -70,8 +70,11 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
         updateCustomProgressDialogMessage(context, "Progress: $data");
       }, onDone: () async {
         try {
-          String result = await wallpaper_lib.Wallpaper.homeScreen();
-          if (type == "lock") {
+          String result = "";
+
+          if (type == "home") {
+            result = await wallpaper_lib.Wallpaper.homeScreen();
+          } else if (type == "lock") {
             result = await wallpaper_lib.Wallpaper.lockScreen();
           } else if (type == "both") {
             result = await wallpaper_lib.Wallpaper.bothScreen();

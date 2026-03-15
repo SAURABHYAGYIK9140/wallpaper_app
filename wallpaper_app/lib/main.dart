@@ -4,9 +4,18 @@ import 'package:get/get.dart';
 import 'package:wallpaper_app/utils/route_pages/page_name.dart';
 import 'package:wallpaper_app/utils/route_pages/route_pages.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:clarity_flutter/clarity_flutter.dart';
 void main() {
-  runApp(const MyApp());
-}
+  WidgetsFlutterBinding.ensureInitialized();
+  final config = ClarityConfig(
+      projectId: "vuons1mxnv",
+      logLevel: LogLevel.None
+  );
+
+  runApp(ClarityWidget(
+    app: MyApp(),
+    clarityConfig: config,
+  ));}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

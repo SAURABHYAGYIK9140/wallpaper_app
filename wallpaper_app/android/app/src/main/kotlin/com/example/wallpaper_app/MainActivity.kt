@@ -1,4 +1,4 @@
-package com.example.wallpaper_app
+package com.saurabh.wallify
 
 import io.flutter.embedding.android.FlutterActivity
 
