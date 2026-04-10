@@ -1,5 +1,7 @@
 import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:wallpaper_app/ads/AdsService.dart';
 import 'package:wallpaper_app/models/Wallpaper.dart';
 import 'package:wallpaper_app/services/Api.dart';
 import 'package:http/http.dart' as http;
@@ -9,15 +11,44 @@ class MainController extends GetxController {
   var isLoading = true.obs;
   var currentPage = 10;
   var selected_catname="";
+  BannerAd? bannerAd;
+  RxBool isBannerLoaded = false.obs;
+  int actionCount = 0;
+
   @override
   void onInit() {
     super.onInit();
     isLoading.value = true;
-
+    AdsService().loadInterstitial();
+    AdsService().loadRewarded();
+    AdsService().loadRewardedInterstitial();
+    AdsService().loadAppOpen();
+    loadBanner();
 
   }
+  void onUserAction() {
+    actionCount++;
+    if (actionCount % 3 == 0) {
+      AdsService().showInterstitial();
+    }
+  }
 
-
+  void loadBanner() {
+    bannerAd = BannerAd(
+      size: AdSize.banner,
+      adUnitId: AdsService().bannerId,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (ad) {
+          isBannerLoaded.value = true;
+        },
+        onAdFailedToLoad: (ad, error) {
+          ad.dispose();
+          isBannerLoaded.value = false;
+        },
+      ),
+    )..load();
+  }
   void _getData() async {
     // isLoading.value = true;
 
@@ -43,6 +74,7 @@ class MainController extends GetxController {
 
   }
   void getDataByCat(String catname,bool clearlist) async {
+    onUserAction();
     selected_catname=catname;
     if(clearlist)
       {

@@ -10,6 +10,7 @@ import 'package:wallpaper/wallpaper.dart'
     as wallpaper_lib; // Use 'wallpaper_lib' as prefix
 import 'package:wallpaper_app/ui/screens/homescreen.dart';
 
+import '../../controllers/main_controller/main_controller.dart';
 import '../../models/Wallpaper.dart';
 import '../../utils/ImageDownloader.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -37,6 +38,8 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
   late String _blurhash="LEHV6nWB2yk8pyo0adR*.7kCMdnj";
 
   void _downloadImage(String type) async {
+    Get.find<MainController>().onUserAction();
+
     String imageUrl = widget.wallpaper.src.large;
     String? downloadedImagePath =
         await ImageDownloader.downloadAndSaveImage(imageUrl);
@@ -156,7 +159,10 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
                   backgroundColor: Colors.grey,
                   child: InkWell(
                     onTap: () {
+
                       Get.back();
+                      Get.find<MainController>().onUserAction();
+
                     },
                     child: Icon(
                       size: 25,

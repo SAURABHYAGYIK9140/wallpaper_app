@@ -50,6 +50,7 @@ class _HomeScreensState extends State<HomeScreen> {
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
+        mainController.onUserAction();
         // Reached the end of the list
         mainController.loadMoreData();
       }
@@ -67,14 +68,14 @@ class _HomeScreensState extends State<HomeScreen> {
                 final Uri emailUri = Uri(
                   scheme: 'mailto',
                   path: 'saurabhyagyik123@gmail.com',
-                  query: 'subject=Detox Mode Support',
+                  query: 'subject=Wallify Mode Support',
                 );
                 await launchUrl(emailUri);
               }
 
               if (value == 'privacy') {
                 final Uri url = Uri.parse(
-                    'https://www.termsfeed.com/live/be3fbf5d-2002-4ad3-a3cf-28c12ba96c27'); // 🔥 your policy link
+                    'https://v0-wallify-policy-page-m7cm5exvj-saurabh-s-projects-2b332bae.vercel.app/#privacy'); // 🔥 your policy link
                 await launchUrl(url, mode: LaunchMode.externalApplication);
               }
 
@@ -208,6 +209,7 @@ class _HomeScreensState extends State<HomeScreen> {
                         itemBuilder: (context, index) {
                           return InkWell(
                             onTap: () {
+                              mainController.onUserAction();
                               FocusScope.of(context).requestFocus(FocusNode());
                               Get.to(WallpaperFullView(
                                   mainController.allwallpapers[index]));

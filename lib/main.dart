@@ -1,3 +1,5 @@
+import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:wallpaper_app/ui/screens/homescreen.dart';
 import 'package:get/get.dart';
@@ -6,15 +8,48 @@ import 'package:wallpaper_app/utils/route_pages/route_pages.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:upgrader/upgrader.dart';
+import 'dart:async';
+import 'dart:convert';
+import 'dart:io';
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+import 'constants/AppConstraints.dart';
+import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
+    if (kReleaseMode) {
+      FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+    }
+  }).catchError((e) {
+    if (kDebugMode) {
+      print('Error initializing Firebase: $e');
+    }
+  });
 
   final config = ClarityConfig(
     projectId: "vuons1mxnv",
     logLevel: LogLevel.None,
   );
+  final remoteConfig = FirebaseRemoteConfig.instance;
 
+  await remoteConfig.setConfigSettings(
+    RemoteConfigSettings(
+      fetchTimeout: Duration(seconds: 10),
+      minimumFetchInterval: Duration(seconds: 0),
+    ),
+  );
+  String apiKey = remoteConfig.getString('image_api_key')??'';
+  
+  print('Fetched API Key: $apiKey');
+  if(apiKey.isNotEmpty){
+    AppConstraints.API_KEY = apiKey;
+    print('API Key is empty. Please check Remote Config settings.');
+  }
+  await remoteConfig.fetchAndActivate();
   runApp(
     ClarityWidget(
       clarityConfig: config,
@@ -46,7 +81,9 @@ class MyApp extends StatelessWidget {
           showIgnore: false,
           showLater: false,
           barrierDismissible: false,
-          upgrader: Upgrader(),
+          upgrader: Upgrader(
+            durationUntilAlertAgain: Duration(hours: 3),
+          ),
           child: child ?? const SizedBox(),
         );
       },
