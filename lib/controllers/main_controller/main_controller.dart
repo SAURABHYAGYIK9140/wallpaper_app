@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:get/get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:wallpaper_app/ads/AdsService.dart';
@@ -26,10 +27,29 @@ class MainController extends GetxController {
     loadBanner();
 
   }
+  // void onUserAction() {
+  //   actionCount++;
+  //   if (actionCount % 3 == 0) {
+  //     AdsService().showInterstitial();
+  //   }
+  // }
+
+  DateTime? lastAdTime;
+
   void onUserAction() {
     actionCount++;
-    if (actionCount % 3 == 0) {
+
+    if (actionCount < 3) return;
+
+    if (lastAdTime != null &&
+        DateTime.now().difference(lastAdTime!) < Duration(seconds: 30)) {
+      return;
+    }
+
+    if (Random().nextInt(100) < 30) {
       AdsService().showInterstitial();
+      lastAdTime = DateTime.now();
+      actionCount = 0;
     }
   }
 

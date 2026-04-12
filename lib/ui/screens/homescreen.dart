@@ -17,6 +17,7 @@ import '../../models/Wallpaper.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -158,87 +159,97 @@ class _HomeScreensState extends State<HomeScreen> {
         TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
                 "Wallify"),
       ),
-        body: Column(
-          children: [
-            Text(
-              '✨ Your Screen Deserves the Best – Discover, Download, and Set Today! ✨',
-              style: GoogleFonts.alef(
-                  textStyle: TextStyle(
-                      color: Colors.white,
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold)),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 10),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-              child: TextField(
-                controller: textcontroller,
-                onChanged: (value) async {
-                  _timer?.cancel();
-                  _timer = Timer(Duration(seconds: 2), () {
-                    mainController.getDataByCat(value, true);
-                  });
-                },
-                textCapitalization: TextCapitalization.words,
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                    hintText: "Search your wallpaper here ",
-                    hintStyle: TextStyle(color: Colors.grey),
-                    border:
-                    OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(13))),
-                    prefixIcon: Icon(Icons.search, color: Colors.white)),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Text(
+                '✨ Your Screen Deserves the Best – Discover, Download, and Set Today! ✨',
+                style: GoogleFonts.alef(
+                    textStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold)),
+                textAlign: TextAlign.center,
               ),
-            ),
-            SizedBox(height: 10),
-            CategoryItem(),
-            Expanded(
-              child: Padding(
-                padding: EdgeInsets.all(10),
-                child: Obx(
-                      () => Stack(
-                    children: [
-                      MasonryGridView.builder(
-                        controller: _scrollController,
-                        itemCount: mainController.allwallpapers.length,
-                        mainAxisSpacing: 7,
-                        crossAxisSpacing: 4,
-                        gridDelegate:
-                        SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2),
-                        itemBuilder: (context, index) {
-                          return InkWell(
-                            onTap: () {
-                              mainController.onUserAction();
-                              FocusScope.of(context).requestFocus(FocusNode());
-                              Get.to(WallpaperFullView(
-                                  mainController.allwallpapers[index]));
-                            },
-                            child: WallpaperItem(
-                              wallpaper: mainController.allwallpapers[index],
-                              index: index,
-                            ),
-                          );
-                        },
-                      ),
-                      Obx(
-                            () => Visibility(
-                          visible: mainController.isLoading.value,
-                          child: Center(
-                            child: Padding(
-                              padding: EdgeInsets.all(8),
-                              child: CircularProgressIndicator(),
+              SizedBox(height: 10),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                child: TextField(
+                  controller: textcontroller,
+                  onChanged: (value) async {
+                    _timer?.cancel();
+                    _timer = Timer(Duration(seconds: 2), () {
+                      mainController.getDataByCat(value, true);
+                    });
+                  },
+                  textCapitalization: TextCapitalization.words,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                      hintText: "Search your wallpaper here ",
+                      hintStyle: TextStyle(color: Colors.grey),
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(13))),
+                      prefixIcon: Icon(Icons.search, color: Colors.white)),
+                ),
+              ),
+              SizedBox(height: 10),
+              CategoryItem(),
+
+              Expanded(
+                child: Padding(
+                  padding: EdgeInsets.all(10),
+                  child: Obx(
+                        () => Stack(
+                      children: [
+                        MasonryGridView.builder(
+                          controller: _scrollController,
+                          itemCount: mainController.allwallpapers.length,
+                          mainAxisSpacing: 7,
+                          crossAxisSpacing: 4,
+                          gridDelegate:
+                          SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2),
+                          itemBuilder: (context, index) {
+                            return InkWell(
+                              onTap: () {
+                                mainController.onUserAction();
+                                FocusScope.of(context).requestFocus(FocusNode());
+                                Get.to(WallpaperFullView(
+                                    mainController.allwallpapers[index]));
+                              },
+                              child: WallpaperItem(
+                                wallpaper: mainController.allwallpapers[index],
+                                index: index,
+                              ),
+                            );
+                          },
+                        ),
+                        Obx(
+                              () => Visibility(
+                            visible: mainController.isLoading.value,
+                            child: Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(8),
+                                child: CircularProgressIndicator(),
+                              ),
                             ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
-          ],
-        )
-    );
+
+              Obx(() => mainController.isBannerLoaded.value
+                  ? SizedBox(
+                height: mainController.bannerAd!.size.height.toDouble(),
+                width: mainController.bannerAd!.size.width.toDouble(),
+                child: AdWidget(ad: mainController.bannerAd!),
+              )
+                  : SizedBox()),
+            ],
+          ),
+        )    );
   }
 }
