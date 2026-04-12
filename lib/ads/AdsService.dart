@@ -12,6 +12,8 @@ class AdsService {
 
   bool isTest = true;
 
+
+
   // ================= IDs =================
 
   String get bannerId => isTest
