@@ -23,13 +23,16 @@ class WallpaperItem extends StatelessWidget {
       decoration: BoxDecoration(
         boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2.0)],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8.0),
-        child: Image.network(
-          url,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) =>
-              Center(child: Icon(Icons.downloading)),
+      child: Hero(
+        tag: 'wallpaper_${wallpaper.id}',
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8.0),
+          child: Image.network(
+            url,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) =>
+                Center(child: Icon(Icons.downloading)),
+          ),
         ),
       ),
     );

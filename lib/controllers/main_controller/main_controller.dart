@@ -10,7 +10,7 @@ import 'package:http/http.dart' as http;
 class MainController extends GetxController {
   List<Wallpaper> allwallpapers = <Wallpaper>[].obs;
   var isLoading = true.obs;
-  var currentPage = 10;
+  var currentPage = 1;
   var selected_catname="";
   BannerAd? bannerAd;
   RxBool isBannerLoaded = false.obs;
@@ -26,6 +26,12 @@ class MainController extends GetxController {
     AdsService().loadAppOpen();
     loadBanner();
 
+  }
+
+  @override
+  void onClose() {
+    bannerAd?.dispose();
+    super.onClose();
   }
   // void onUserAction() {
   //   actionCount++;
@@ -72,7 +78,7 @@ class MainController extends GetxController {
   void _getData() async {
     // isLoading.value = true;
 
-    final response = await MyApi.get_curateddata(currentPage, perPage: 10);
+    final response = await MyApi.getCuratedData(currentPage, perPage: 10);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       var photos = data['photos'] as List;
@@ -82,7 +88,7 @@ class MainController extends GetxController {
       allwallpapers.addAll(photos
           .map<Wallpaper>((e) => Wallpaper.fromJson(e))
           .toList());
-      currentPage += 10; // Increment page by 10 after fetching data
+      currentPage++; // Increment page after fetching data
     } else {
       // Handle error
       print("Failed to fetch data");
@@ -106,7 +112,7 @@ class MainController extends GetxController {
 
     isLoading.value = true;
 
-    final response = await MyApi.get_curateddata_bycat(catname,currentPage, perPage: 10);
+    final response = await MyApi.getCuratedDataByCat(catname,currentPage, perPage: 10);
     if (response.statusCode == 200) {
       var data = jsonDecode(response.body);
       var photos = data['photos'] as List;
@@ -115,7 +121,7 @@ class MainController extends GetxController {
 
       allwallpapers.addAll(
           photos.map<Wallpaper>((e) => Wallpaper.fromJson(e)).toList());
-      currentPage += 10; // Increment page by 10 after fetching data
+      currentPage++; // Increment page after fetching data
     } else {
       // Handle error
       print("Failed to fetch data");

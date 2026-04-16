@@ -38,18 +38,20 @@ void main() async {
 
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
-      fetchTimeout: Duration(seconds: 10),
-      minimumFetchInterval: Duration(seconds: 0),
+      fetchTimeout: const Duration(seconds: 10),
+      minimumFetchInterval: const Duration(seconds: 0),
     ),
   );
-  String apiKey = remoteConfig.getString('image_api_key')??'';
+  
+  await remoteConfig.fetchAndActivate();
+  String apiKey = remoteConfig.getString('image_api_key') ?? '';
   
   print('Fetched API Key: $apiKey');
-  if(apiKey.isNotEmpty){
+  if (apiKey.isNotEmpty) {
     AppConstraints.API_KEY = apiKey;
+  } else {
     print('API Key is empty. Please check Remote Config settings.');
   }
-  await remoteConfig.fetchAndActivate();
   runApp(
     ClarityWidget(
       clarityConfig: config,

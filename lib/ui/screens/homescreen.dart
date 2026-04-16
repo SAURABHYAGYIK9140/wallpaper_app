@@ -29,7 +29,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreensState extends State<HomeScreen> {
   MainController mainController = Get.put(MainController());
   final ScrollController _scrollController = ScrollController();
-  var textcontroller=new TextEditingController();
+  final TextEditingController textcontroller = TextEditingController();
   Timer? _timer;
 
   @override
@@ -40,10 +40,10 @@ class _HomeScreensState extends State<HomeScreen> {
   }
   @override
   void dispose() {
-    // TODO: implement dispose
+    _scrollController.dispose();
+    textcontroller.dispose();
+    _timer?.cancel();
     super.dispose();
-    mainController.dispose();
-    mainController.dispose();
   }
 
   @override
