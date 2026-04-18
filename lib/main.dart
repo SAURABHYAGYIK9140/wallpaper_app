@@ -1,23 +1,21 @@
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:wallpaper_app/ui/screens/homescreen.dart';
-import 'package:get/get.dart';
-import 'package:wallpaper_app/utils/route_pages/page_name.dart';
-import 'package:wallpaper_app/utils/route_pages/route_pages.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:wallpaper_app/features/wallpapers/presentation/pages/homescreen.dart';
+import 'package:wallpaper_app/features/wallpapers/presentation/bloc/wallpaper_bloc.dart';
+import 'package:wallpaper_app/features/wallpapers/presentation/bloc/wallpaper_event.dart';
+import 'package:wallpaper_app/injection_container.dart' as di;
 import 'package:google_fonts/google_fonts.dart';
 import 'package:clarity_flutter/clarity_flutter.dart';
 import 'package:upgrader/upgrader.dart';
-import 'dart:async';
-import 'dart:convert';
-import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 
-import 'constants/AppConstraints.dart';
-import 'firebase_options.dart';
-import 'services/PushNotificationService.dart';
+import 'package:wallpaper_app/core/constants/AppConstraints.dart';
+import 'package:wallpaper_app/firebase_options.dart';
+import 'package:wallpaper_app/core/services/PushNotificationService.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
@@ -34,8 +32,8 @@ void main() async {
     projectId: "vuons1mxnv",
     logLevel: LogLevel.None,
   );
+  
   final remoteConfig = FirebaseRemoteConfig.instance;
-
   await remoteConfig.setConfigSettings(
     RemoteConfigSettings(
       fetchTimeout: const Duration(seconds: 10),
@@ -46,14 +44,12 @@ void main() async {
   await remoteConfig.fetchAndActivate();
   String apiKey = remoteConfig.getString('image_api_key') ?? '';
   
-  print('Fetched API Key: $apiKey');
   if (apiKey.isNotEmpty) {
     AppConstraints.API_KEY = apiKey;
-  } else {
-    print('API Key is empty. Please check Remote Config settings.');
   }
   
   await PushNotificationService().initialize();
+  await di.init();
   
   runApp(
     ClarityWidget(
@@ -68,30 +64,34 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textTheme = Theme.of(context).textTheme;
-
-    return   GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Wallify',
-      theme: ThemeData(
-        fontFamily: GoogleFonts.poppins().fontFamily,
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider<WallpaperBloc>(
+          create: (context) => di.sl<WallpaperBloc>()..add(GetCuratedEvent()),
+        ),
+      ],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Wallify',
+        theme: ThemeData(
+          fontFamily: GoogleFonts.poppins().fontFamily,
+        ),
+        home: Builder(
+          builder: (context) {
+            return UpgradeAlert(
+              showPrompt: true,
+              dialogStyle: UpgradeDialogStyle.cupertino,
+              showIgnore: false,
+              showLater: false,
+              barrierDismissible: false,
+              upgrader: Upgrader(
+                durationUntilAlertAgain: Duration(hours: 3),
+              ),
+              child: const HomeScreen(),
+            );
+          }
+        ),
       ),
-      initialRoute: MyPagesName.homescreen,
-      getPages: MyPages.list,
-
-      builder: (context, child) {
-        return UpgradeAlert(
-          showPrompt: true,
-          dialogStyle: UpgradeDialogStyle.cupertino,
-          showIgnore: false,
-          showLater: false,
-          barrierDismissible: false,
-          upgrader: Upgrader(
-            durationUntilAlertAgain: Duration(hours: 3),
-          ),
-          child: child ?? const SizedBox(),
-        );
-      },
     );
   }
 }
