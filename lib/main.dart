@@ -18,6 +18,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'constants/AppConstraints.dart';
 import 'firebase_options.dart';
+import 'services/PushNotificationService.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
@@ -52,6 +53,9 @@ void main() async {
   } else {
     print('API Key is empty. Please check Remote Config settings.');
   }
+  
+  await PushNotificationService().initialize();
+  
   runApp(
     ClarityWidget(
       clarityConfig: config,
