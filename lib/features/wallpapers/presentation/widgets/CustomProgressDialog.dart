@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomProgressDialog extends StatefulWidget {
   final String message;
 
-  CustomProgressDialog({required this.message});
+  const CustomProgressDialog({super.key, required this.message});
 
   @override
   State<CustomProgressDialog> createState() => _CustomProgressDialogState();
@@ -30,7 +30,7 @@ class _CustomProgressDialogState extends State<CustomProgressDialog> {
       backgroundColor: Colors.transparent,
       elevation: 0,
       child: Container(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(10),
@@ -38,11 +38,11 @@ class _CustomProgressDialogState extends State<CustomProgressDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            CircularProgressIndicator(),
-            SizedBox(height: 20),
+            const CircularProgressIndicator(),
+            const SizedBox(height: 20),
             Text(
               _message,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
               ),

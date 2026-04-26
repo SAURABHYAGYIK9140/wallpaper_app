@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -14,7 +13,6 @@ import '../widgets/Categoryitem.dart';
 import '../widgets/WallpaperItem.dart';
 import 'wallpaperfullview.dart';
 import '../../domain/entities/wallpaper_entity.dart';
-import '../../../../core/ads/AdsService.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -2,6 +2,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:wallpaper_app/features/wallpapers/presentation/pages/homescreen.dart';
 import 'package:wallpaper_app/features/wallpapers/presentation/bloc/wallpaper_bloc.dart';
 import 'package:wallpaper_app/features/wallpapers/presentation/bloc/wallpaper_event.dart';
@@ -17,7 +18,8 @@ import 'package:wallpaper_app/firebase_options.dart';
 import 'package:wallpaper_app/core/services/PushNotificationService.dart';
 
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
+  FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform).then((value) {
     if (kReleaseMode) {
       FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
@@ -50,6 +52,7 @@ void main() async {
   
   await PushNotificationService().initialize();
   await di.init();
+  FlutterNativeSplash.remove();
   
   runApp(
     ClarityWidget(
@@ -85,7 +88,7 @@ class MyApp extends StatelessWidget {
               showLater: false,
               barrierDismissible: false,
               upgrader: Upgrader(
-                durationUntilAlertAgain: Duration(hours: 3),
+                durationUntilAlertAgain: const Duration(hours: 3),
               ),
               child: const HomeScreen(),
             );

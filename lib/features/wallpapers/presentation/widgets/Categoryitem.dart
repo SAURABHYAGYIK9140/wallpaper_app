@@ -4,7 +4,7 @@ import '../bloc/wallpaper_bloc.dart';
 import '../bloc/wallpaper_event.dart';
 
 class CategoryItem extends StatefulWidget {
-  const CategoryItem({Key? key}) : super(key: key);
+  const CategoryItem({super.key});
 
   @override
   State<CategoryItem> createState() => _CategoryItemState();
