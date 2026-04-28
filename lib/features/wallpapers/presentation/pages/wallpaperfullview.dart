@@ -12,6 +12,10 @@ import 'package:blurhash_ffi/blurhash_ffi.dart';
 import '../../domain/entities/wallpaper_entity.dart';
 import '../../../../core/ads/AdsService.dart';
 import 'package:wallpaper_manager_flutter/wallpaper_manager_flutter.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../bloc/collection_bloc.dart';
+import 'collection_screen.dart';
+
 class WallpaperFullView extends StatefulWidget {
   final WallpaperEntity wallpaper;
 
@@ -26,11 +30,13 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
   String _blurhash = "LEHV6nWB2yk8pyo0adR*.7kCMdnj";
   bool isPreviewMode = false;
   double slideOffset = 0.0;
+  bool isInCollection = false;
 
   @override
   void initState() {
     super.initState();
     generateBlurHashFromUrl(widget.wallpaper.src['large'] ?? '');
+    context.read<CollectionBloc>().add(CheckIfInCollectionEvent(widget.wallpaper.id));
   }
 
   void _downloadImage(String type) async {
@@ -110,252 +116,312 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
   @override
   Widget build(BuildContext context) {
     var height = MediaQuery.of(context).size.height;
-    return SafeArea(
-      child: Scaffold(
-        body: Container(
-          color: Colors.black,
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  Flexible(
-                    child: Container(
-                      height: height,
-                      color: Colors.black,
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            isPreviewMode = !isPreviewMode;
-                          });
-                        },
+    return BlocListener<CollectionBloc, CollectionState>(
+      listener: (context, state) {
+        if (state.checkedId == widget.wallpaper.id) {
+          setState(() {
+            isInCollection = state.isInCollection;
+          });
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          body: Container(
+            color: Colors.black,
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    Flexible(
+                      child: Container(
+                        height: height,
+                        color: Colors.black,
                         child: Container(
                           decoration: const BoxDecoration(
                             boxShadow: [BoxShadow(color: Colors.black, blurRadius: 2.0)],
                           ),
                           child: Hero(
-                            tag: 'wallpaper_${widget.wallpaper.id}',
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(8.0),
-                              child: BlurHash(
-                                hash: _blurhash,
-                                image: widget.wallpaper.src['large'] ?? '',
-                                imageFit: BoxFit.cover,
-                                duration: const Duration(milliseconds: 200),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              Visibility(
-                visible: !isPreviewMode,
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  alignment: AlignmentDirectional.topStart,
-                  child: CircleAvatar(
-                    backgroundColor: Colors.white70,
-                    child: InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                        AdsService().showInterstitial();
-                      },
-                      child: const Icon(size: 25, Icons.arrow_back, color: Colors.black),
-                    ),
-                  ),
-                ),
-              ),
-              Visibility(
-                visible: !isPreviewMode,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Container(
-                    margin: const EdgeInsets.only(bottom: 10),
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
-                      ),
-                      onPressed: () {
-                        showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) {
-                            return Container(
-                              padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 20, top: 20),
-                              decoration: const BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(30),
-                                  topRight: Radius.circular(30),
+                              tag: 'wallpaper_${widget.wallpaper.id}',
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(8.0),
+                                child: BlurHash(
+                                  hash: _blurhash,
+                                  image: widget.wallpaper.src['large'] ?? '',
+                                  imageFit: BoxFit.cover,
+                                  duration: const Duration(milliseconds: 200),
                                 ),
                               ),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Center(
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.black)),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        _downloadImage("home");
-                                      },
-                                      child: const Text("SET AS HOME WALLPAPER", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.black)),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        _downloadImage("lock");
-                                      },
-                                      child: const Text("SET AS LOCK WALLPAPER", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.black)),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        _downloadImage("both");
-                                      },
-                                      child: const Text("SET ON BOTH", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                                    ),
-                                  ),
-                                  Center(
-                                    child: ElevatedButton(
-                                      style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.white)),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text("CANCEL", style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        child: Text("SET AS WALLPAPER", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+                Visibility(
+                  visible: !isPreviewMode,
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    alignment: AlignmentDirectional.topStart,
+                    child: CircleAvatar(
+                      backgroundColor: Colors.white70,
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.pop(context);
+                          AdsService().showInterstitial();
+                        },
+                        child: const Icon(size: 25, Icons.arrow_back, color: Colors.black),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Visibility(
-                visible: !isPreviewMode,
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
+                Visibility(
+                  visible: !isPreviewMode,
                   child: Align(
-                    alignment: AlignmentDirectional.topEnd,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: Colors.white70,
-                          child: InkWell(
-                            onTap: () async {
-                              String imageUrl = widget.wallpaper.src['large'] ?? '';
-                              String? downloadedImagePath = await ImageDownloader.downloadAndSaveImage(imageUrl);
-                              if (downloadedImagePath != null) {
-                                bool success = await saveImageToGallery(downloadedImagePath);
-                                if (mounted) {
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      margin: const EdgeInsets.only(bottom: 10),
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ButtonStyle(
+                          backgroundColor: WidgetStateProperty.all<Color>(Colors.black),
+                        ),
+                        onPressed: () {
+                          showModalBottomSheet(
+                            backgroundColor: Colors.transparent,
+                            context: context,
+                            builder: (context) {
+                              return Container(
+                                padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom + 20, top: 20),
+                                decoration: const BoxDecoration(
+                                  color: Colors.black,
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(30),
+                                    topRight: Radius.circular(30),
+                                  ),
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    Center(
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.black)),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          _downloadImage("home");
+                                        },
+                                        child: const Text("SET AS HOME WALLPAPER", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                                      ),
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.black)),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          _downloadImage("lock");
+                                        },
+                                        child: const Text("SET AS LOCK WALLPAPER", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                                      ),
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.black)),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          _downloadImage("both");
+                                        },
+                                        child: const Text("SET ON BOTH", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                                      ),
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.white)),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                        },
+                                        child: const Text("CANCEL", style: TextStyle(color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          child: Text("SET AS WALLPAPER", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: !isPreviewMode,
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Align(
+                      alignment: AlignmentDirectional.topEnd,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CircleAvatar(
+                            backgroundColor: Colors.white70,
+                            child: InkWell(
+                              onTap: () async {
+                                String imageUrl = widget.wallpaper.src['large'] ?? '';
+                                String? downloadedImagePath = await ImageDownloader.downloadAndSaveImage(imageUrl);
+                                if (downloadedImagePath != null) {
+                                  bool success = await saveImageToGallery(downloadedImagePath);
+                                  if (mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text(success ? 'Image saved to gallery!' : 'Failed to save image.')),
+                                    );
+                                  }
+                                }
+                              },
+                              child: const Icon(size: 25, Icons.download, color: Colors.black),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          CircleAvatar(
+                            backgroundColor: Colors.white70,
+                            child: InkWell(
+                              onTap: () {
+                                setState(() {
+                                  isPreviewMode = true;
+                                });
+                              },
+                              child: const Icon(size: 25, Icons.visibility, color: Colors.black),
+                            ),
+                          ),
+                          const SizedBox(height: 15),
+                          CircleAvatar(
+                            backgroundColor: Colors.white70,
+                            child: InkWell(
+                              onTap: () {
+                                if (isInCollection) {
+                                  context.read<CollectionBloc>().add(RemoveFromCollectionEvent(widget.wallpaper.id));
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text(success ? 'Image saved to gallery!' : 'Failed to save image.')),
+                                    SnackBar(
+                                      backgroundColor: Colors.white,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      margin: const EdgeInsets.all(15),
+                                      content: const Text("Removed from collection", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                                      action: SnackBarAction(
+                                        textColor: Colors.blue,
+                                        label: "SEE COLLECTION",
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const CollectionScreen()),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  );
+                                } else {
+                                  context.read<CollectionBloc>().add(AddToCollectionEvent(widget.wallpaper));
+                                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      backgroundColor: Colors.white,
+                                      behavior: SnackBarBehavior.floating,
+                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                      margin: const EdgeInsets.all(15),
+                                      content: const Text("Added to collection", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w500)),
+                                      action: SnackBarAction(
+                                        textColor: Colors.blue,
+                                        label: "SEE COLLECTION",
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(builder: (context) => const CollectionScreen()),
+                                          );
+                                        },
+                                      ),
+                                    ),
                                   );
                                 }
-                              }
-                            },
-                            child: const Icon(size: 25, Icons.download, color: Colors.black),
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        CircleAvatar(
-                          backgroundColor: Colors.white70,
-                          child: InkWell(
-                            onTap: () {
-                              setState(() {
-                                isPreviewMode = true;
-                              });
-                            },
-                            child: const Icon(size: 25, Icons.visibility, color: Colors.black),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              if (isPreviewMode)
-                Positioned.fill(
-                  child: GestureDetector(
-                    onVerticalDragUpdate: (details) {
-                      if (details.primaryDelta! < 0) {
-                        setState(() {
-                          slideOffset += details.primaryDelta!;
-                        });
-                      }
-                    },
-                    onVerticalDragEnd: (details) {
-                      if (slideOffset < -150 || (details.primaryVelocity ?? 0) < -500) {
-                        setState(() {
-                          isPreviewMode = false;
-                          slideOffset = 0.0;
-                        });
-                      } else {
-                        setState(() {
-                          slideOffset = 0.0;
-                        });
-                      }
-                    },
-                    child: Container(
-                      color: Colors.transparent,
-                      child: Transform.translate(
-                        offset: Offset(0, slideOffset),
-                        child: Stack(
-                          children: [
-                            Positioned(
-                              top: 100,
-                              left: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Text(
-                                    getFormattedTime(),
-                                    style: const TextStyle(color: Colors.white, fontSize: 80, fontWeight: FontWeight.w200, shadows: [Shadow(color: Colors.black45, blurRadius: 10)]),
-                                  ),
-                                  Text(
-                                    getFormattedDate(),
-                                    style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w400, shadows: [Shadow(color: Colors.black45, blurRadius: 10)]),
-                                  ),
-                                ],
+                              },
+                              child: Icon(
+                                size: 25,
+                                isInCollection ? Icons.favorite : Icons.favorite_border,
+                                color: isInCollection ? Colors.red : Colors.black,
                               ),
                             ),
-                            const Positioned(
-                              bottom: 50,
-                              left: 0,
-                              right: 0,
-                              child: Column(
-                                children: [
-                                  Icon(Icons.keyboard_arrow_up, color: Colors.white, size: 30, shadows: [Shadow(color: Colors.black45, blurRadius: 10)]),
-                                  SizedBox(height: 10),
-                                  Text("Swipe up to unlock", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500, shadows: [Shadow(color: Colors.black45, blurRadius: 10)])),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
                 ),
-            ],
+                if (isPreviewMode)
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onVerticalDragUpdate: (details) {
+                        if (details.primaryDelta! < 0) {
+                          setState(() {
+                            slideOffset += details.primaryDelta!;
+                          });
+                        }
+                      },
+                      onVerticalDragEnd: (details) {
+                        if (slideOffset < -150 || (details.primaryVelocity ?? 0) < -500) {
+                          setState(() {
+                            isPreviewMode = false;
+                            slideOffset = 0.0;
+                          });
+                        } else {
+                          setState(() {
+                            slideOffset = 0.0;
+                          });
+                        }
+                      },
+                      child: Container(
+                        color: Colors.transparent,
+                        child: Transform.translate(
+                          offset: Offset(0, slideOffset),
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                top: 100,
+                                left: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      getFormattedTime(),
+                                      style: const TextStyle(color: Colors.white, fontSize: 80, fontWeight: FontWeight.w200, shadows: [Shadow(color: Colors.black45, blurRadius: 10)]),
+                                    ),
+                                    Text(
+                                      getFormattedDate(),
+                                      style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w400, shadows: [Shadow(color: Colors.black45, blurRadius: 10)]),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const Positioned(
+                                bottom: 50,
+                                left: 0,
+                                right: 0,
+                                child: Column(
+                                  children: [
+                                    Icon(Icons.keyboard_arrow_up, color: Colors.white, size: 30, shadows: [Shadow(color: Colors.black45, blurRadius: 10)]),
+                                    SizedBox(height: 10),
+                                    Text("Swipe up to unlock", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w500, shadows: [Shadow(color: Colors.black45, blurRadius: 10)])),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
       ),

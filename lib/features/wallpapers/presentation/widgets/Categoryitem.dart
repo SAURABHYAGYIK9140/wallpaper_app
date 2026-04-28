@@ -4,7 +4,8 @@ import '../bloc/wallpaper_bloc.dart';
 import '../bloc/wallpaper_event.dart';
 
 class CategoryItem extends StatefulWidget {
-  const CategoryItem({super.key});
+  final VoidCallback? onCategorySelected;
+  const CategoryItem({super.key, this.onCategorySelected});
 
   @override
   State<CategoryItem> createState() => _CategoryItemState();
@@ -38,6 +39,9 @@ class _CategoryItemState extends State<CategoryItem> {
                 setState(() {
                   selectedIndex = index;
                 });
+                if (widget.onCategorySelected != null) {
+                  widget.onCategorySelected!();
+                }
                 if (categoryList[index] == "All") {
                   context.read<WallpaperBloc>().add(GetCuratedEvent());
                 } else {

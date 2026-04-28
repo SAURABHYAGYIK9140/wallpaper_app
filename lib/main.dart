@@ -17,6 +17,8 @@ import 'package:wallpaper_app/core/constants/AppConstraints.dart';
 import 'package:wallpaper_app/firebase_options.dart';
 import 'package:wallpaper_app/core/services/PushNotificationService.dart';
 
+import 'features/wallpapers/presentation/bloc/collection_bloc.dart';
+
 void main() async {
   WidgetsBinding widgetsBinding = WidgetsFlutterBinding.ensureInitialized();
   FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
@@ -71,6 +73,9 @@ class MyApp extends StatelessWidget {
       providers: [
         BlocProvider<WallpaperBloc>(
           create: (context) => di.sl<WallpaperBloc>()..add(GetCuratedEvent()),
+        ),
+        BlocProvider<CollectionBloc>(
+          create: (context) => di.sl<CollectionBloc>(),
         ),
       ],
       child: MaterialApp(

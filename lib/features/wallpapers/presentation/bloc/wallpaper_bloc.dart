@@ -49,7 +49,6 @@ class WallpaperBloc extends Bloc<WallpaperEvent, WallpaperState> {
       if (currentState is WallpaperLoaded) {
         oldWallpapers = currentState.wallpapers;
       } else if (currentState is WallpaperLoading) {
-        // Prevent duplicate load more
         return;
       }
 

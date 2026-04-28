@@ -5,12 +5,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../bloc/wallpaper_bloc.dart';
 import '../bloc/wallpaper_event.dart';
 import '../bloc/wallpaper_state.dart';
 import '../widgets/Categoryitem.dart';
 import '../widgets/WallpaperItem.dart';
+import 'collection_screen.dart';
 import 'wallpaperfullview.dart';
 import '../../domain/entities/wallpaper_entity.dart';
 
@@ -77,12 +79,14 @@ class _HomeScreensState extends State<HomeScreen> {
                 );
               }
               if (value == 'ChangeTheme') {
-                Fluttertoast.showToast(
-                  msg: "See collection coming soon!",
-                  gravity: ToastGravity.BOTTOM,
-                  backgroundColor: Colors.black,
-                  textColor: Colors.white,
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const CollectionScreen()),
                 );
+              }
+              if (value == 'share') {
+                const String appLink = "https://play.google.com/store/apps/details?id=com.saurabh.wallify"; // Replace with your actual app link
+                await Share.share("Check out this amazing wallpaper app: $appLink");
               }
             },
             itemBuilder: (context) => [
@@ -93,6 +97,16 @@ class _HomeScreensState extends State<HomeScreen> {
                     Icon(Icons.wallpaper, color: Colors.white),
                     SizedBox(width: 12),
                     Text("See your collection", style: TextStyle(color: Colors.white)),
+                  ],
+                ),
+              ),
+              const PopupMenuItem(
+                value: 'share',
+                child: Row(
+                  children: [
+                    Icon(Icons.share_outlined, color: Colors.white),
+                    SizedBox(width: 12),
+                    Text("Share App", style: TextStyle(color: Colors.white)),
                   ],
                 ),
               ),
@@ -173,12 +187,17 @@ class _HomeScreensState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 10),
-            const CategoryItem(),
+            CategoryItem(
+              onCategorySelected: () {
+                textcontroller.clear();
+              },
+            ),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.all(10),
                 child: BlocBuilder<WallpaperBloc, WallpaperState>(
                   builder: (context, state) {
+
                     List<WallpaperEntity> wallpapers = [];
                     bool isLoading = false;
 
