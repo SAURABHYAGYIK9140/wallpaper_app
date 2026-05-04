@@ -52,8 +52,7 @@
         android:usesCleartextTraffic="true">
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-4775377672441609~4918558488"/>
-        <!-- Main Activity -->
+            android:value="ca-app-pub-4775377672441609~7697923582"/>    <!-- Main Activity -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

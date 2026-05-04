@@ -37,10 +37,12 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
     super.initState();
     generateBlurHashFromUrl(widget.wallpaper.src['large'] ?? '');
     context.read<CollectionBloc>().add(CheckIfInCollectionEvent(widget.wallpaper.id));
+    AdsService().loadRewarded();
   }
 
   void _downloadImage(String type) async {
-    AdsService().showInterstitial(); 
+    AdsService().incrementActionCount();
+    AdsService().showInterstitial();
 
     String imageUrl = widget.wallpaper.src['large'] ?? '';
     
@@ -167,6 +169,7 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
                       child: InkWell(
                         onTap: () {
                           Navigator.pop(context);
+                          AdsService().incrementActionCount();
                           AdsService().showInterstitial();
                         },
                         child: const Icon(size: 25, Icons.arrow_back, color: Colors.black),
@@ -230,6 +233,18 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
                                           _downloadImage("both");
                                         },
                                         child: const Text("SET ON BOTH", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+                                      ),
+                                    ),
+                                    Center(
+                                      child: ElevatedButton(
+                                        style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.blue)),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          AdsService().showRewarded(() {
+                                            _downloadImage("both");
+                                          });
+                                        },
+                                        child: const Text("WATCH AD FOR INSTANT SET", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                                       ),
                                     ),
                                     Center(

@@ -6,6 +6,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:share_plus/share_plus.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../bloc/wallpaper_bloc.dart';
 import '../bloc/wallpaper_event.dart';
@@ -15,6 +16,7 @@ import '../widgets/WallpaperItem.dart';
 import 'collection_screen.dart';
 import 'wallpaperfullview.dart';
 import '../../domain/entities/wallpaper_entity.dart';
+import '../../../../core/ads/AdsService.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -27,11 +29,23 @@ class _HomeScreensState extends State<HomeScreen> {
   final ScrollController _scrollController = ScrollController();
   final TextEditingController textcontroller = TextEditingController();
   Timer? _timer;
+  BannerAd? _bannerAd;
 
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onScroll);
+    _bannerAd = BannerAd(
+      adUnitId: AdsService().bannerId,
+      size: AdSize.banner,
+      request: AdsService().request,
+      listener: BannerAdListener(
+        onAdLoaded: (ad) => setState(() {}),
+        onAdFailedToLoad: (ad, error) => ad.dispose(),
+      ),
+    )..load();
+    AdsService().loadInterstitial();
+    AdsService().loadRewarded();
   }
 
   @override
@@ -39,6 +53,7 @@ class _HomeScreensState extends State<HomeScreen> {
     _scrollController.dispose();
     textcontroller.dispose();
     _timer?.cancel();
+    _bannerAd?.dispose();
     super.dispose();
   }
 
@@ -249,8 +264,11 @@ class _HomeScreensState extends State<HomeScreen> {
                 ),
               ),
             ),
-            // Ad Banner logic can be integrated here similarly by wrapping with another BlocBuilder or using a separate Bloc for Ads if needed.
-            // For now, keeping it simple as we are refactoring.
+            if (_bannerAd != null)
+              Container(
+                height: 50,
+                child: AdWidget(ad: _bannerAd!),
+              ),
           ],
         ),
       ),

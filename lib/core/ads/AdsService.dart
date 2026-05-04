@@ -13,27 +13,29 @@ class AdsService {
 
 
 
-  // ================= IDs =================
+// ================= IDs =================
+
+  static int _actionCount = 0;
 
   String get bannerId => isTest
       ? 'ca-app-pub-3940256099942544/6300978111'
-      : 'ca-app-pub-4775377672441609/7685591547';
+      : 'ca-app-pub-4775377672441609/4801965806';
 
   String get interstitialId => isTest
       ? 'ca-app-pub-3940256099942544/1033173712'
-      : 'ca-app-pub-4775377672441609/2712031698';
+      : 'ca-app-pub-4775377672441609/5939562318';
 
   String get rewardedId => isTest
       ? 'ca-app-pub-3940256099942544/5224354917'
-      : 'ca-app-pub-4775377672441609/7142231294';
+      : 'ca-app-pub-4775377672441609/1872550132';
 
   String get rewardedInterstitialId => isTest
       ? 'ca-app-pub-3940256099942544/5354046379'
-      : 'ca-app-pub-4775377672441609/1298148724';
+      : 'ca-app-pub-4775377672441609/7061072299';
 
   String get appOpenId => isTest
       ? 'ca-app-pub-3940256099942544/3419835294'
-      : 'ca-app-pub-4775377672441609/1326068888';
+      : 'ca-app-pub-4775377672441609/5588433865';
 
   // ================= Interstitial =================
 
@@ -61,7 +63,12 @@ class AdsService {
     );
   }
 
+  void incrementActionCount() {
+    _actionCount++;
+  }
+
   void showInterstitial() {
+    if (_actionCount % 5 != 0) return;
     if (_interstitialAd == null) return;
 
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(

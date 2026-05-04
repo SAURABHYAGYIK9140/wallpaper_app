@@ -13,6 +13,7 @@ import 'package:upgrader/upgrader.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 
+import 'package:wallpaper_app/core/ads/AdsService.dart';
 import 'package:wallpaper_app/core/constants/AppConstraints.dart';
 import 'package:wallpaper_app/firebase_options.dart';
 import 'package:wallpaper_app/core/services/PushNotificationService.dart';
@@ -54,6 +55,8 @@ void main() async {
   
   await PushNotificationService().initialize();
   await di.init();
+  AdsService().init();
+  AdsService().loadAppOpen();
   FlutterNativeSplash.remove();
   
   runApp(
@@ -86,6 +89,9 @@ class MyApp extends StatelessWidget {
         ),
         home: Builder(
           builder: (context) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              AdsService().showAppOpen();
+            });
             return UpgradeAlert(
               showPrompt: true,
               dialogStyle: UpgradeDialogStyle.cupertino,
