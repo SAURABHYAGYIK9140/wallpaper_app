@@ -79,7 +79,7 @@ class CollectionBloc extends Bloc<CollectionEvent, CollectionState> {
   final GetCollection getCollection;
   final IsInCollection isInCollection;
 
-  CollectionBloc({
+    CollectionBloc({
     required this.addToCollection,
     required this.removeFromCollection,
     required this.getCollection,

@@ -1,4 +1,5 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:wallpaper_app/core/services/IAPService.dart';
 
 class AdsService {
   static final AdsService _instance = AdsService._internal();
@@ -68,6 +69,7 @@ class AdsService {
   }
 
   void showInterstitial() {
+    if (IAPService().isPremium) return; // ad-free user
     if (_actionCount % 5 != 0) return;
     if (_interstitialAd == null) return;
 
@@ -112,6 +114,11 @@ class AdsService {
   }
 
   void showRewarded(Function onReward) {
+    if (IAPService().isPremium) {
+      // Premium users get the reward instantly without watching an ad.
+      onReward();
+      return;
+    }
     if (_rewardedAd == null) return;
 
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(

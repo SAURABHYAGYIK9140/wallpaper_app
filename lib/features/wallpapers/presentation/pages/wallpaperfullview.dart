@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:wallpaper_app/core/services/IAPService.dart';
 import 'package:wallpaper_app/features/wallpapers/data/data_sources/ImageDownloader.dart';
 import 'package:wallpaper_app/features/wallpapers/presentation/widgets/CustomProgressDialog.dart';
 import 'package:gal/gal.dart';
@@ -235,6 +236,7 @@ class _WallpaperFullViewState extends State<WallpaperFullView> {
                                         child: const Text("SET ON BOTH", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
                                       ),
                                     ),
+                              if (!IAPService().isPremium)
                                     Center(
                                       child: ElevatedButton(
                                         style: ButtonStyle(backgroundColor: WidgetStateProperty.all<Color>(Colors.blue)),
